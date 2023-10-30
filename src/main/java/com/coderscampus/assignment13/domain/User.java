@@ -4,16 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity // Class name = User, DB Table name = user
 @Table(name = "users")
@@ -24,8 +15,10 @@ public class User {
 	private String name;
 	private LocalDate createdDate;
 	private List<Account> accounts = new ArrayList<>();
+	@OneToOne(cascade = CascadeType.ALL)
+	@PrimaryKeyJoinColumn
 	private Address address;
-	
+
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getUserId() {
 		return userId;
@@ -51,7 +44,7 @@ public class User {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public LocalDate getCreatedDate() {
 		return createdDate;
 	}
@@ -60,21 +53,36 @@ public class User {
 	}
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_account",
-	           joinColumns = @JoinColumn(name = "user_id"), 
+	           joinColumns = @JoinColumn(name = "user_id"),
 	           inverseJoinColumns = @JoinColumn(name = "account_id"))
 	public List<Account> getAccounts() {
 		return accounts;
 	}
+
+
 	public void setAccounts(List<Account> accounts) {
 		this.accounts = accounts;
 	}
-	@OneToOne(mappedBy = "user")
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	public Address getAddress() {
+		System.out.println("Getting Address " + getUsername() + " : " + address);
 		return address;
 	}
+//	public void setAddress(Address address) {
+//		System.out.println("Setting Address for " + getUsername() + " : " + address);
+//		this.address = address;
+//	}
+
+//	Start GPT
+
 	public void setAddress(Address address) {
+		System.out.println("Setting Address for " + getUsername() + " : " + address);
 		this.address = address;
+		if (address != null) {
+			address.setUser(this);
+		}
 	}
+//	End GPT
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", username=" + username + ", password=" + password + ", name=" + name

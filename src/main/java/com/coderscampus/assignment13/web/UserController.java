@@ -3,6 +3,8 @@ package com.coderscampus.assignment13.web;
 import java.util.Arrays;
 import java.util.Set;
 
+import com.coderscampus.assignment13.domain.Address;
+import com.coderscampus.assignment13.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,6 +20,8 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private AddressService addressService;
 	
 	@GetMapping("/register")
 	public String getCreateUser (ModelMap model) {
@@ -49,6 +53,12 @@ public class UserController {
 	@GetMapping("/users/{userId}")
 	public String getOneUser (ModelMap model, @PathVariable Long userId) {
 		User user = userService.findById(userId);
+
+//		Created by GPT
+		if (user.getAddress() == null) {
+			user.setAddress(new Address());
+		}
+//		End GPT
 		model.put("users", Arrays.asList(user));
 		model.put("user", user);
 		return "users";
@@ -57,6 +67,7 @@ public class UserController {
 	@PostMapping("/users/{userId}")
 	public String postOneUser (User user) {
 		userService.saveUser(user);
+		addressService.saveUserAddress(user);
 		return "redirect:/users/"+user.getUserId();
 	}
 	
