@@ -54,6 +54,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Logback dependencies -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version> <!-- Make sure this version matches the one you want -->
+		</dependency>
+
 	</dependencies>
 
 	<build>

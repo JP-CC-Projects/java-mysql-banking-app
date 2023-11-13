@@ -11,15 +11,27 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Service
-@Transactional
 
 public class AccountService {
+    private UserRepository userRepo;
+    private AccountRepository accountRepo;
+    private AddressRepository addressRepo;
 
     @Autowired
-    private UserRepository userRepo;
-    @Autowired
-    private AccountRepository accountRepo;
+    public AccountService(UserRepository userRepo,
+                          AccountRepository accountRepo,
+                          AddressRepository addressRepo) {
+        this.userRepo = userRepo;
+        this.accountRepo = accountRepo;
+        this.addressRepo = addressRepo;
+    }
+
+    public Set<Account> findAccountsByUserId(Long userId) {
+        return accountRepo.findAccountsByUserId(userId);
+    }
+
 
 }

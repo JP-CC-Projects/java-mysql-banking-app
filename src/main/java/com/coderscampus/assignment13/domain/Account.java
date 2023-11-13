@@ -19,7 +19,7 @@ public class Account {
 	private String accountName;
 	private List<Transaction> transactions = new ArrayList<>();
 	private List<User> users = new ArrayList<>();
-	
+
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getAccountId() {
 		return accountId;
