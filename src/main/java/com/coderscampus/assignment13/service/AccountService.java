@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -32,6 +34,15 @@ public class AccountService {
     public Set<Account> findAccountsByUserId(Long userId) {
         return accountRepo.findAccountsByUserId(userId);
     }
+    public Account findAccountByAccountId(Long accountId) {
+        return accountRepo.findAccountByAccountId(accountId).orElse(null);
+    }
 
-
+    public Set<User> findUsersByAccountId(Long accountId) {
+        return accountRepo.findUsersByAccountId(accountId);
+    }
+    @Transactional
+    public Account saveAccount(Account account) {
+        return accountRepo.save(account);
+    }
 }

@@ -64,32 +64,53 @@ public class UserService {
     }
 
     @Transactional
-    public User saveUser(User user) {
-        if (user.getUserId() == null) {
-            Account checking = new Account();
-            checking.setAccountName("Checking Account");
-            checking.getUsers().add(user);
-
-            Account savings = new Account();
-            savings.setAccountName("Savings Account");
-            savings.getUsers().add(user);
-
-            user.getAccounts().add(checking);
-            user.getAccounts().add(savings);
-            accountRepo.save(checking);
-            accountRepo.save(savings);
-
-            user.setCreatedDate(LocalDate.now());
+    public User saveUser(User postedUser) {
+        User existingUser = null;
+        if (postedUser.getUserId() != null) {
+            existingUser = userRepo.findById(postedUser.getUserId()).orElse(null);
+            postedUser = updateExistingUser(existingUser, postedUser);
         }
-        if (user.getAddress() == null) {
+
+        if (postedUser.getUserId() == null) {
+            createNewUser(postedUser);
+        }
+
+        if (postedUser.getAddress() == null) {
             Address address = new Address();
-            address.setUser(user);     // Associate the address with the user
+            address.setUser(postedUser);     // Associate the address with the user
             addressRepo.save(address);
         } else {
-            user.getAddress().setUserId(user.getUserId());
-            addressRepo.save(user.getAddress());
+            postedUser.getAddress().setUserId(postedUser.getUserId());
+            addressRepo.save(postedUser.getAddress());
         }
-        return userRepo.save(user);
+        return userRepo.save(postedUser);
+    }
+
+    public User createNewUser(User user) {
+        Account checking = new Account();
+        checking.setAccountName("Checking Account");
+        checking.getUsers().add(user);
+
+        Account savings = new Account();
+        savings.setAccountName("Savings Account");
+        savings.getUsers().add(user);
+
+        user.getAccounts().add(checking);
+        user.getAccounts().add(savings);
+        accountRepo.save(checking);
+        accountRepo.save(savings);
+
+        user.setCreatedDate(LocalDate.now());
+        return user;
+    }
+
+    public User updateExistingUser(User existingUser, User postedUser) {
+        existingUser.setUsername(postedUser.getUsername());
+        existingUser.setPassword(postedUser.getPassword());
+        existingUser.setName(postedUser.getName());
+        existingUser.setAddress(postedUser.getAddress());
+
+        return existingUser;
     }
 
 
