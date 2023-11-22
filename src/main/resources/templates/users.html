@@ -58,7 +58,7 @@
 								accountId=${account.accountId}
 							)
 						}" 
-					th:text="${account.accountName}" method="post"></a></span>
+					th:text="${account.accountName}" method="get"></a></span>
 			</div><br />
 			<form th:action="@{/users/{userId}/accounts(userId=${user.userId})}" method="post">
 				<input type="submit" value="Create New Bank Account" />

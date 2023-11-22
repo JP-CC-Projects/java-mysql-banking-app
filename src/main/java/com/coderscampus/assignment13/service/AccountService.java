@@ -42,7 +42,18 @@ public class AccountService {
         return accountRepo.findUsersByAccountId(accountId);
     }
     @Transactional
+    public User createOneBankAccount(User user) {
+        Account newAccount = new Account();
+        newAccount.setAccountName("Checking Account");
+        newAccount.getUsers().add(user);
+        accountRepo.save(newAccount);
+        return user;
+    }
+
+    @Transactional
     public Account saveAccount(Account account) {
         return accountRepo.save(account);
     }
+
+
 }

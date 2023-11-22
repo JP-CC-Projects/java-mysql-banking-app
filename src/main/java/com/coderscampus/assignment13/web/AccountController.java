@@ -24,7 +24,7 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @GetMapping("/users/{userId}/accounts/")
+    @GetMapping("/users/{userId}/accounts")
     public String getAllAccountsByUserId(ModelMap model,
                                          @PathVariable Long userId) {
         Set<Account> accounts = accountService.findAccountsByUserId(userId);
@@ -35,20 +35,25 @@ public class AccountController {
     }
     @GetMapping("/users/{userId}/accounts/{accountId}")
     public String getOneAccountByAccountId(ModelMap model,
-                                            @PathVariable Long userId,
                                             @PathVariable Long accountId) {
+        System.out.println("Controller: getOneAccountByAccountId");
         Account account = accountService.findAccountByAccountId(accountId);
+        System.out.println("Retrieved Account: " + account);
+        System.out.println(account.getAccountId());
         model.put("account", account);
         return "accounts";
     }
 
-    @PostMapping ("/users/{userId}/accounts/")
-    public String postOneAccountsByUserId(ModelMap model,
-                                         @PathVariable Long userId) {
-        return "accounts";
+    @PostMapping ("/users/{userId}/accounts")
+    public String postOneAccountByUserId(@ModelAttribute("user") User user) {
+        System.out.println("Controller: postOneAccountByUserId");
+
+        accountService.createOneBankAccount(user);
+        return "redirect:/users/{userId}/accounts";
     }
     @PostMapping("/users/{userId}/accounts/{accountId}")
     public String postOneAccountsByAccountId(@ModelAttribute("account") Account account) {
+        System.out.println("Controller: postOneAccountsByAccountId");
         accountService.saveAccount(account);
         return "redirect:/users/{userId}/accounts/{accountId}";
     }
