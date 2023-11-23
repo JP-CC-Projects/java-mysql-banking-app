@@ -42,18 +42,21 @@ public class AccountService {
         return accountRepo.findUsersByAccountId(accountId);
     }
     @Transactional
-    public User createOneBankAccount(User user) {
+    public Account createOneBankAccount(Long userId) {
+        User existingUser = userRepo.findById(userId).orElse(null);
         Account newAccount = new Account();
-        newAccount.setAccountName("Checking Account");
-        newAccount.getUsers().add(user);
+        newAccount.setAccountName("New Account");
+        newAccount.getUsers().add(existingUser);
+        existingUser.getAccounts().add(newAccount);
+
         accountRepo.save(newAccount);
-        return user;
+        userRepo.save(existingUser);
+        return newAccount;
     }
 
     @Transactional
-    public Account saveAccount(Account account) {
-        return accountRepo.save(account);
+    public Account saveAccount(Account postedAccount){
+        Account updatedAccount = null;
+        return updatedAccount;
     }
-
-
 }

@@ -3,6 +3,7 @@ package com.coderscampus.assignment13.web;
 import com.coderscampus.assignment13.domain.Account;
 import com.coderscampus.assignment13.domain.User;
 import com.coderscampus.assignment13.service.AccountService;
+import com.coderscampus.assignment13.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -12,16 +13,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 @Controller
 public class AccountController {
 
     private AccountService accountService;
+    private UserService userService;
+
     @Autowired
-    public AccountController (AccountService accountService){
+    public AccountController (AccountService accountService, UserService userService){
         this.accountService = accountService;
+        this.userService = userService;
     }
 
     @GetMapping("/users/{userId}/accounts")
@@ -33,28 +36,31 @@ public class AccountController {
         model.put("accounts", accounts);
         return "accounts";
     }
+    @PostMapping ("/users/{userId}/accounts")
+    public String postCreateOneAccount(ModelMap model, @PathVariable Long userId) {
+        System.out.println("Controller: postOneAccountByUserId");
+        Account newAccount = accountService.createOneBankAccount(userId);
+        return "redirect:/users/{userId}/accounts/" + newAccount.getAccountId();
+    }
     @GetMapping("/users/{userId}/accounts/{accountId}")
     public String getOneAccountByAccountId(ModelMap model,
+                                           @PathVariable Long userId,
                                             @PathVariable Long accountId) {
         System.out.println("Controller: getOneAccountByAccountId");
         Account account = accountService.findAccountByAccountId(accountId);
         System.out.println("Retrieved Account: " + account);
         System.out.println(account.getAccountId());
-        model.put("account", account);
+        model.addAttribute("account", account);
+        User user = userService.findById(userId);
+        model.addAttribute("user", user);
         return "accounts";
     }
-
-    @PostMapping ("/users/{userId}/accounts")
-    public String postOneAccountByUserId(@ModelAttribute("user") User user) {
-        System.out.println("Controller: postOneAccountByUserId");
-
-        accountService.createOneBankAccount(user);
-        return "redirect:/users/{userId}/accounts";
-    }
     @PostMapping("/users/{userId}/accounts/{accountId}")
-    public String postOneAccountsByAccountId(@ModelAttribute("account") Account account) {
+    public String postUpdateOneAccount(@ModelAttribute("account") Account account) {
         System.out.println("Controller: postOneAccountsByAccountId");
         accountService.saveAccount(account);
         return "redirect:/users/{userId}/accounts/{accountId}";
     }
+
+
 }
