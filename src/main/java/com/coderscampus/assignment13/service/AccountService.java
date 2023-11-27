@@ -55,8 +55,15 @@ public class AccountService {
     }
 
     @Transactional
-    public Account saveAccount(Account postedAccount){
-        Account updatedAccount = null;
-        return updatedAccount;
+    public Account updateAccount(Account postedAccount, Long accountId){
+        Account existingAccount = accountRepo.findAccountByAccountId(accountId).orElse(null);
+        Set<User> existingUsers = findUsersByAccountId(accountId);
+        for(User existingUser : existingUsers){
+            existingAccount.getUsers().add(existingUser);
+        }
+
+        existingAccount.setAccountName(postedAccount.getAccountName());
+        accountRepo.save(existingAccount);
+        return existingAccount;
     }
 }
