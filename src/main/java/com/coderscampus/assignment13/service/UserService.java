@@ -68,7 +68,10 @@ public class UserService {
         User existingUser = null;
         if (postedUser.getUserId() != null) {
             existingUser = userRepo.findById(postedUser.getUserId()).orElse(null);
+            System.out.println("Existing User Password: " + existingUser.getPassword());
             postedUser = updateExistingUser(existingUser, postedUser);
+            System.out.println("Posted User Password: " + postedUser.getPassword());
+
         }
 
         if (postedUser.getUserId() == null) {
@@ -106,10 +109,12 @@ public class UserService {
 
     public User updateExistingUser(User existingUser, User postedUser) {
         existingUser.setUsername(postedUser.getUsername());
-        existingUser.setPassword(postedUser.getPassword());
+        String newPassword = postedUser.getPassword();
+        if (newPassword != null && newPassword.length() > 0) {
+            existingUser.setPassword(newPassword);
+        }
         existingUser.setName(postedUser.getName());
         existingUser.setAddress(postedUser.getAddress());
-
         return existingUser;
     }
 
